@@ -1,0 +1,30 @@
+---
+# Установка и настройка поведения сервиса nginx:
+# сервис запущен и включён в автозагрузку при старте ОС
+- name: Настройка сервиса nginx
+  hosts: web
+  become: true
+  tasks:
+    - name: Убедиться, что nginx установлен
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Разместить стартовую страницу сайта
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /var/www/html/index.html
+        mode: "0644"
+      notify: Перезапустить nginx
+
+    - name: Включить nginx при старте ОС и запустить сервис
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Перезапустить nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted

@@ -1,0 +1,22 @@
+---
+# Установка веб-сервера nginx и интерпретатора PHP на хосты группы web
+- name: Установка nginx и PHP
+  hosts: web
+  become: true
+  tasks:
+    - name: Обновить кэш пакетов apt
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Установить nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Установить интерпретатор PHP (php-fpm и php-cli)
+      ansible.builtin.apt:
+        name:
+          - php-fpm
+          - php-cli
+        state: present
